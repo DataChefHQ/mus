@@ -1,0 +1,151 @@
+---
+---
+
+<div id="cookie-consent-banner" style="display: none;">
+	<div class="cookie-consent-inner">
+		<p class="cookie-consent-text">
+			We use cookies to understand how you use our site and improve your experience. By clicking "Accept", you
+			consent to our use of analytics cookies.
+		</p>
+		<div class="cookie-consent-actions">
+			<button id="cookie-consent-reject" type="button" class="cookie-consent-btn cookie-consent-btn--secondary">
+				Reject
+			</button>
+			<button id="cookie-consent-accept" type="button" class="cookie-consent-btn cookie-consent-btn--primary">
+				Accept
+			</button>
+		</div>
+	</div>
+</div>
+
+<style>
+	#cookie-consent-banner {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 9999;
+		background: var(--sl-color-bg-nav);
+		border-top: 1px solid var(--sl-color-hairline);
+		box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+		padding: 14px 20px;
+	}
+
+	.cookie-consent-inner {
+		max-width: 72rem;
+		margin: 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		column-gap: 40px;
+		row-gap: 10px;
+		flex-wrap: nowrap;
+		text-align: center;
+	}
+
+	.cookie-consent-text {
+		margin: 0;
+		flex: 1 1 auto;
+		min-width: 0;
+		font-size: var(--sl-text-sm);
+		color: var(--sl-color-text);
+	}
+
+	.cookie-consent-actions {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		flex-shrink: 0;
+	}
+
+	@media (max-width: 640px) {
+		.cookie-consent-inner {
+			flex-direction: column;
+			flex-wrap: wrap;
+		}
+	}
+
+	.cookie-consent-btn {
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+		padding: 6px 16px;
+		border-radius: 6px;
+		cursor: pointer;
+		transition:
+			background-color 0.2s ease,
+			filter 0.2s ease;
+	}
+
+	.cookie-consent-btn--primary {
+		background: var(--sl-color-accent);
+		color: white;
+		border: 1px solid var(--sl-color-accent);
+	}
+
+	.cookie-consent-btn--primary:hover {
+		filter: brightness(0.9);
+	}
+
+	.cookie-consent-btn--secondary {
+		background: transparent;
+		color: var(--sl-color-text);
+		border: 1px solid var(--sl-color-hairline);
+	}
+
+	.cookie-consent-btn--secondary:hover {
+		background: rgba(128, 128, 128, 0.15);
+	}
+</style>
+
+<script is:inline>
+	(() => {
+		const CONSENT_KEY = 'dc_cookie_consent'
+
+		const getConsent = () => {
+			try {
+				return window.localStorage.getItem(CONSENT_KEY)
+			} catch {
+				return null
+			}
+		}
+
+		const setConsent = (status) => {
+			try {
+				window.localStorage.setItem(CONSENT_KEY, status)
+			} catch {
+				// localStorage unavailable (e.g. private browsing) - consent will be asked again next visit.
+			}
+			window.dispatchEvent(new CustomEvent('dc-cookie-consent', { detail: { status } }))
+		}
+
+		document.addEventListener('DOMContentLoaded', () => {
+			const banner = document.getElementById('cookie-consent-banner')
+			const acceptBtn = document.getElementById('cookie-consent-accept')
+			const rejectBtn = document.getElementById('cookie-consent-reject')
+
+			if (!banner || !acceptBtn || !rejectBtn) {
+				return
+			}
+
+			const existingConsent = getConsent()
+			if (existingConsent === 'accepted' || existingConsent === 'rejected') {
+				// Consent already recorded - notify listeners (e.g. Clarity) without showing the banner again.
+				window.dispatchEvent(new CustomEvent('dc-cookie-consent', { detail: { status: existingConsent } }))
+				return
+			}
+
+			banner.style.display = 'block'
+
+			acceptBtn.addEventListener('click', () => {
+				banner.style.display = 'none'
+				setConsent('accepted')
+			})
+
+			rejectBtn.addEventListener('click', () => {
+				banner.style.display = 'none'
+				setConsent('rejected')
+			})
+		})
+	})()
+</script>

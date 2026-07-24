@@ -1,0 +1,9 @@
+---
+import Default from '@astrojs/starlight/components/Footer.astro';
+import CookieConsent from './CookieConsent.astro';
+import Analytics from './Analytics.astro';
+---
+
+<Default {...Astro.props}><slot /></Default>
+<CookieConsent />
+<Analytics />

@@ -144,6 +144,7 @@ export default defineConfig({
 			components: {
 				Header: './src/components/Header.astro',
 				Hero: './src/components/HeroSection.astro',
+				Footer: './src/components/Footer.astro',
 			},
 			customCss: ['./src/styles/custom.css'],
 		}),
