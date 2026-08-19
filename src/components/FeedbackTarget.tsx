@@ -14,6 +14,11 @@ import type { FeedbackAction, FeedbackActionType } from '@/types'
 
 export interface FeedbackTargetHandle {
   reset(): void
+  /**
+   * Programmatically reveal the trigger (and optionally open its toolbar)
+   * without a hover — used to script guided tours, demos and tests.
+   */
+  reveal(options?: { openToolbar?: boolean }): void
 }
 
 interface FeedbackTargetProps {
@@ -74,7 +79,15 @@ export const FeedbackTarget = forwardRef<FeedbackTargetHandle, FeedbackTargetPro
         setShowTrigger(false)
       }
     },
-  }), [showToolbar, activeDialog, standaloneOpen, capturing])
+    reveal(options) {
+      if (hoverTimerRef.current) {
+        clearTimeout(hoverTimerRef.current)
+        hoverTimerRef.current = null
+      }
+      setShowTrigger(true)
+      if (options?.openToolbar && config.mode !== 'standalone') setShowToolbar(true)
+    },
+  }), [showToolbar, activeDialog, standaloneOpen, capturing, config.mode])
 
   const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     // If moving to a descendant (e.g. trigger button positioned outside card bounds), keep visible

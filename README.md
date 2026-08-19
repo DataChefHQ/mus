@@ -13,6 +13,10 @@ When AI outputs need to be questioned, explained, or challenged, that should hap
 
 Wrap any output with `<FeedbackTarget>`. Users hover. A toolbar appears exactly where the output lives.
 
+![MUS demo: hovering an AI-generated card reveals a feedback toolbar. The recording shows a thumbs-up reaction, a support message opening a Slack channel, and a voice note being recorded and submitted.](./assets/mus-demo.gif)
+
+Try the live, click-through version at [mus.datachef.co](https://mus.datachef.co/#try-it-now).
+
 ```tsx
 import { MusProvider, FeedbackTarget } from '@datachef/mus'
 import '@datachef/mus/styles.css'

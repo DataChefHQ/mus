@@ -756,6 +756,18 @@ header.header starlight-menu-button button:hover {
 
 .playground-container {
   position: relative;
+  /* Break out of the narrow prose column so the app + Slack windows have room
+     to sit side by side. Negative margin (not transform) keeps position:fixed
+     toasts anchored to the viewport. */
+  width: min(1240px, 94vw);
+  margin-left: calc(50% - min(620px, 47vw));
+}
+
+@media (max-width: 720px) {
+  .playground-container {
+    width: auto;
+    margin-left: 0;
+  }
 }
 
 .playground-mobile-notice {
@@ -764,56 +776,55 @@ header.header starlight-menu-button button:hover {
 
 @media (max-width: 720px) {
   .playground-wrapper {
-    filter: blur(4px);
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .playground-toasts {
-    display: none !important;
+    display: none;
   }
 
   .playground-mobile-notice {
     display: flex;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10;
-    width: calc(100% - 3rem);
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.6rem;
-    padding: 1.5rem 1.25rem;
+    gap: 0;
     border-radius: 14px;
-    border: 1px solid color-mix(in srgb, var(--sl-color-accent) 35%, transparent);
-    background: color-mix(in srgb, var(--sl-color-bg) 85%, transparent);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--sl-color-accent) 25%, transparent);
+    background: color-mix(in srgb, var(--sl-color-accent) 4%, transparent);
+    box-shadow: 0 20px 50px -24px color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
   }
 
-  .playground-mobile-notice-icon {
-    font-size: 2rem;
-    line-height: 1;
+  .playground-mobile-gif {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 18%, transparent);
   }
 
-  .playground-mobile-notice strong {
-    font-size: 1.05rem;
+  .playground-mobile-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    text-align: center;
+    padding: 1rem 1.25rem 1.25rem;
+  }
+
+  .playground-mobile-caption strong {
+    font-size: 0.95rem;
     font-weight: 700;
     color: var(--sl-color-white);
   }
 
-  .playground-mobile-notice p {
+  [data-theme='light'] .playground-mobile-caption strong {
+    color: var(--sl-color-black);
+  }
+
+  .playground-mobile-caption p {
     margin: 0 !important;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--sl-color-gray-2);
     line-height: 1.5;
   }
 }
 
 .playground-wrapper {
+  position: relative; /* anchors the product-tour overlay */
   margin: 2rem 0;
   border-radius: 14px;
   overflow: visible;
@@ -863,6 +874,160 @@ header.header starlight-menu-button button:hover {
   opacity: 0.75;
 }
 
+/* =====================================================
+   Playground — app shell (sidebar + topbar)
+   ===================================================== */
+
+.playground-appshell {
+  display: grid;
+  grid-template-columns: 168px 1fr;
+}
+
+.playground-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.1rem 0.85rem;
+  background: color-mix(in srgb, var(--sl-color-accent) 6%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
+  border-bottom-left-radius: 13px;
+}
+
+.playground-sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.25rem;
+}
+
+.playground-sidebar-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--mus-primary-foreground, #0d1f14);
+  background: linear-gradient(135deg, var(--sl-color-accent-high), var(--sl-color-accent));
+}
+
+.playground-sidebar-logo-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.playground-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.playground-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-align: left;
+  color: var(--sl-color-gray-3);
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.playground-sidebar-item:hover:not(.is-active) {
+  background: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
+  color: var(--sl-color-accent-high);
+}
+
+[data-theme='light'] .playground-sidebar-item:hover:not(.is-active) {
+  color: var(--sl-color-accent);
+}
+
+.playground-sidebar-item.is-active {
+  background: color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
+  color: var(--sl-color-accent-high);
+}
+
+[data-theme='light'] .playground-sidebar-item.is-active {
+  color: var(--sl-color-accent);
+}
+
+.playground-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.playground-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 14%, transparent);
+}
+
+.playground-topbar-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.playground-topbar-crumb {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sl-color-gray-4);
+}
+
+.playground-topbar-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.playground-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.playground-bell {
+  position: relative;
+  display: inline-flex;
+  color: var(--sl-color-gray-3);
+}
+
+.playground-bell-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+  border: 1.5px solid var(--sl-color-bg);
+}
+
+.playground-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--sl-color-accent-high);
+  background: color-mix(in srgb, var(--sl-color-accent) 20%, transparent);
+}
+
 .playground-body {
   padding: 1.5rem;
   display: flex;
@@ -882,27 +1047,439 @@ header.header starlight-menu-button button:hover {
   color: var(--sl-color-accent);
 }
 
-.playground-card {
+/* =====================================================
+   Live sandbox — intro gate, AI-generation motion, and a
+   guided tour that runs on the real cards.
+   ===================================================== */
+
+/* ---- Intro gate: watch how MUS works, then enter the sandbox ---- */
+.sandbox-intro {
+  display: flex;
+  justify-content: center;
+  padding: 2.25rem 1.75rem;
+}
+
+.sandbox-intro-video {
+  position: relative;
+  flex: 1 1 300px;
+  min-width: 260px;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 22%, transparent);
+  background: #000;
+  box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.6);
+}
+
+.sandbox-intro-video video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sandbox-intro-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 999px;
+  padding: 3px 9px;
+  backdrop-filter: blur(4px);
+}
+
+.sandbox-intro-copy {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.sandbox-intro-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sl-color-accent-high);
+}
+
+[data-theme='light'] .sandbox-intro-eyebrow {
+  color: var(--sl-color-accent);
+}
+
+.sandbox-intro-title {
+  margin: 0 !important;
+  font-size: 1.35rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--sl-color-white);
+}
+
+[data-theme='light'] .sandbox-intro-title {
+    color: #374151;
+}
+
+.sandbox-intro-text {
+  margin: 0 !important;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--sl-color-gray-2);
+}
+
+[data-theme='light'] .sandbox-intro-text {
+  color: var(--sl-color-gray-4);
+}
+
+.sandbox-intro-text strong {
+  font-weight: 600;
+  color: var(--sl-color-accent-high);
+}
+
+[data-theme='light'] .sandbox-intro-text strong {
+  color: var(--sl-color-accent);
+}
+
+.sandbox-intro-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+  padding: 0.6rem 1.15rem;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--sl-color-accent-high), var(--sl-color-accent));
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.sandbox-intro-cta:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.sandbox-intro-note {
+  font-size: 0.72rem;
+  color: var(--sl-color-gray-3);
+}
+
+/* ---- "AI is generating" hint line + skeleton shimmer ---- */
+.playground-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.playground-hint.is-generating {
+  color: var(--sl-color-accent-high);
+}
+
+[data-theme='light'] .playground-hint.is-generating {
+  color: var(--sl-color-accent);
+}
+
+.playground-hint-spark {
+  animation: hint-spark 1.1s ease-in-out infinite;
+}
+
+@keyframes hint-spark {
+  0%, 100% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.playground-skel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 168px;
+  background: var(--sl-color-bg);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 14%, transparent);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.playground-skel-line,
+.playground-skel-stat {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--sl-color-accent) 8%, transparent) 25%,
+    color-mix(in srgb, var(--sl-color-accent) 22%, transparent) 37%,
+    color-mix(in srgb, var(--sl-color-accent) 8%, transparent) 63%
+  );
+  background-size: 400% 100%;
+  animation: skel-shimmer 1.4s ease infinite;
+  animation-delay: var(--d, 0s);
+}
+
+.playground-skel-line {
+  height: 10px;
+}
+
+.playground-skel-stat {
+  height: 34px;
+  width: 55%;
+  margin: 0.4rem 0;
+}
+
+.playground-skel-line.w-40 { width: 40%; }
+.playground-skel-line.w-70 { width: 70%; }
+.playground-skel-line.w-90 { width: 90%; }
+
+@keyframes skel-shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* ---- Streaming text caret ---- */
+.tw-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--sl-color-accent-high);
+  animation: tw-blink 0.9s step-end infinite;
+}
+
+[data-theme='light'] .tw-caret {
+  background: var(--sl-color-accent);
+}
+
+@keyframes tw-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ---- Regenerate button (topbar) ---- */
+.playground-regen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 30px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-2);
+  background: color-mix(in srgb, var(--sl-color-accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 22%, transparent);
+  border-radius: 7px;
+  padding: 0 0.65rem;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.playground-regen:hover:not(:disabled) {
+  color: var(--sl-color-accent-high);
+  border-color: color-mix(in srgb, var(--sl-color-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--sl-color-accent) 16%, transparent);
+}
+
+[data-theme='light'] .playground-regen:hover:not(:disabled) {
+  color: var(--sl-color-accent);
+}
+
+.playground-regen:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.playground-regen svg.is-spinning {
+  animation: replay-spin 0.7s ease;
+}
+
+/* ---- Footer text actions ---- */
+.playground-footer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.playground-textbtn {
+  border: none;
+  background: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--sl-color-gray-3);
+  cursor: pointer;
+  padding: 0.3rem 0.4rem;
+  border-radius: 6px;
+  transition: color 0.15s ease;
+}
+
+.playground-textbtn:hover {
+  color: var(--sl-color-accent-high);
+}
+
+[data-theme='light'] .playground-textbtn:hover {
+  color: var(--sl-color-accent);
+}
+
+.playground-footer-sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--sl-color-accent) 35%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playground-skel-line,
+  .playground-skel-stat,
+  .playground-hint-spark,
+  .tw-caret,
+  .playground-regen svg.is-spinning {
+    animation: none;
+  }
+}
+
+.playground-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: stretch;
+  gap: 1.25rem;
+}
+
+@media (max-width: 860px) {
+  .playground-grid-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .playground-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.playground-replay {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: none;
+  background: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--sl-color-gray-3);
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.playground-replay:hover {
+  color: var(--sl-color-accent-high);
+  background: color-mix(in srgb, var(--sl-color-accent) 10%, transparent);
+}
+
+[data-theme='light'] .playground-replay:hover {
+  color: var(--sl-color-accent);
+}
+
+.playground-replay svg.is-spinning {
+  animation: replay-spin 0.6s ease;
+}
+
+@keyframes replay-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Equal-size dashboard widgets — header / hero stat / caption, always in
+   that order, so all three cards read as one consistent grid regardless of
+   content length. */
+.playground-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  height: 100%;
+  min-height: 168px;
   background: var(--sl-color-bg);
   border: 1px solid color-mix(in srgb, var(--sl-color-accent) 18%, transparent);
   border-radius: 10px;
   padding: 1.25rem;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.playground-card:hover {
+.playground-widget:hover {
   border-color: color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -16px color-mix(in srgb, var(--sl-color-accent) 45%, transparent);
 }
 
-.playground-card-header {
+.playground-widget-header {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.playground-widget-title {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.playground-widget-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 0 0 auto;
+}
+
+.playground-widget-stat {
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--sl-color-accent-high);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: -0.01em;
+}
+
+[data-theme='light'] .playground-widget-stat {
+  color: var(--sl-color-accent);
+}
+
+.playground-widget-stat.playground-widget-stat-text {
+  font-size: 1.35rem;
+  font-family: inherit;
+}
+
+.playground-widget-stat-label {
+  font-size: 0.76rem;
+  color: var(--sl-color-gray-3);
+}
+
+[data-theme='light'] .playground-widget-stat-label {
+  color: var(--sl-color-gray-4);
+}
+
+.playground-widget-caption {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--sl-color-gray-2);
+}
+
+[data-theme='light'] .playground-widget-caption {
+  color: var(--sl-color-gray-4);
 }
 
 .playground-tag {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   padding: 0.15rem 0.5rem;
   font-size: 0.7rem;
   font-weight: 600;
@@ -924,126 +1501,6 @@ header.header starlight-menu-button button:hover {
 
 [data-theme='light'] .playground-tag.tag-blue {
   color: #2563eb;
-}
-
-.playground-card-title {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.playground-card-body {
-  margin: 0;
-  line-height: 1.65;
-  color: var(--sl-color-gray-2);
-}
-
-[data-theme='light'] .playground-card-body {
-  color: var(--sl-color-gray-4);
-}
-
-.playground-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.playground-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.6rem 0.85rem;
-  background: color-mix(in srgb, var(--sl-color-accent) 6%, transparent);
-  border-radius: 6px;
-}
-
-.playground-score {
-  font-family: ui-monospace, SFMono-Regular, monospace;
-  font-weight: 600;
-  color: var(--sl-color-accent-high);
-}
-
-[data-theme='light'] .playground-score {
-  color: var(--sl-color-accent);
-}
-
-/* Toasts */
-.playground-toasts {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  z-index: 9999;
-  pointer-events: none;
-}
-
-.playground-toast {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: var(--sl-color-bg);
-  border: 1px solid var(--sl-color-accent-high);
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  box-shadow: 0 12px 32px -12px color-mix(in srgb, var(--sl-color-accent) 60%, transparent);
-  animation: toast-in 0.25s ease;
-  min-width: 220px;
-}
-
-.playground-toast-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--sl-color-accent-high);
-  color: #fff;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-[data-theme='light'] .playground-toast-icon {
-  background: var(--sl-color-accent);
-}
-
-.playground-toast-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  font-size: 0.85rem;
-}
-
-.playground-toast-body strong {
-  text-transform: capitalize;
-  color: var(--sl-color-accent-high);
-}
-
-[data-theme='light'] .playground-toast-body strong {
-  color: var(--sl-color-accent);
-}
-
-.playground-toast-body span {
-  color: var(--sl-color-gray-2);
-}
-
-[data-theme='light'] .playground-toast-body span {
-  color: var(--sl-color-gray-4);
-}
-
-@keyframes toast-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* =====================================================
@@ -1582,4 +2039,619 @@ body:has(.hero) {
 
 .pillar {
   margin-top: 0 !important;
+}
+
+/* =====================================================
+   Playground — "MUS layer" on/off toggle (topbar)
+   ===================================================== */
+
+.playground-layer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 30px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-2);
+  background: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 20%, transparent);
+  border-radius: 7px;
+  padding: 0 0.6rem;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.playground-layer-toggle:hover {
+  border-color: color-mix(in srgb, var(--sl-color-accent) 42%, transparent);
+}
+
+.playground-layer-toggle.is-on {
+  color: var(--sl-color-accent-high);
+  border-color: color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
+}
+
+[data-theme='light'] .playground-layer-toggle.is-on {
+  color: var(--sl-color-accent);
+}
+
+.playground-layer-toggle-label {
+  line-height: 1;
+}
+
+.playground-layer-switch {
+  position: relative;
+  width: 26px;
+  height: 15px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--sl-color-gray-3) 55%, transparent);
+  transition: background 0.18s ease;
+}
+
+.playground-layer-toggle.is-on .playground-layer-switch {
+  background: var(--sl-color-accent);
+}
+
+.playground-layer-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: transform 0.18s ease;
+}
+
+.playground-layer-toggle.is-on .playground-layer-knob {
+  transform: translateX(11px);
+}
+
+/* =====================================================
+   Mock Slack — "what your team sees"
+   ===================================================== */
+
+.slack-window {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 2rem;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 25%, transparent);
+  background: color-mix(in srgb, var(--sl-color-accent) 4%, transparent);
+  box-shadow: 0 20px 50px -24px color-mix(in srgb, var(--sl-color-accent) 40%, transparent);
+}
+
+.slack-window div,
+.slack-window span,
+.slack-window button {
+  margin: 0 !important;
+}
+
+.slack-window svg {
+  margin: 0 !important;
+}
+
+.slack-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  line-height: 1;
+  background: color-mix(in srgb, var(--sl-color-accent) 8%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 18%, transparent);
+}
+
+.slack-topbar-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.75rem !important;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-2);
+}
+
+.slack-body {
+  display: grid;
+  grid-template-columns: 152px 1fr;
+  flex: 1;
+  min-height: 260px;
+}
+
+/* Slack keeps its brand aubergine rail in both site themes */
+.slack-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding: 0.85rem 0.7rem;
+  background: #3f0e40;
+  color: #fff;
+}
+
+.slack-rail-workspace {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fff;
+  padding: 0.1rem 0.35rem 0.55rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  margin-bottom: 0.45rem !important;
+}
+
+.slack-rail-heading {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.55);
+  padding: 0.3rem 0.35rem 0.15rem;
+}
+
+.slack-rail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.81rem;
+  font-weight: 500;
+  padding: 0.28rem 0.4rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.slack-rail-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.slack-rail-item.is-active {
+  background: #1164a3;
+  color: #fff;
+}
+
+.slack-rail-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slack-messages {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: color-mix(in srgb, var(--sl-color-accent) 2%, transparent);
+}
+
+[data-theme='light'] .slack-messages {
+  background: #fff;
+}
+
+.slack-channel-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--sl-color-white);
+  border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 14%, transparent);
+}
+
+.slack-channel-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-theme='light'] .slack-channel-head {
+  color: var(--sl-color-black);
+}
+
+.slack-private-badge {
+  flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: var(--sl-color-gray-2);
+  background: color-mix(in srgb, var(--sl-color-accent) 12%, transparent);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+}
+
+.slack-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.slack-msg {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  animation: slack-in 0.28s ease;
+}
+
+@keyframes slack-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.slack-avatar {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.slack-msg-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.slack-msg-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.slack-msg-head strong {
+  font-size: 0.85rem;
+  color: var(--sl-color-white);
+}
+
+[data-theme='light'] .slack-msg-head strong {
+  color: #374151;
+}
+
+.slack-msg-time {
+  font-size: 0.67rem;
+  color: var(--sl-color-gray-3);
+}
+
+.slack-context {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: var(--sl-color-accent-high);
+  background: color-mix(in srgb, var(--sl-color-accent) 14%, transparent);
+  padding: 0.08rem 0.4rem;
+  border-radius: 999px;
+}
+
+[data-theme='light'] .slack-context {
+  color: var(--sl-color-accent);
+}
+
+.slack-msg-body {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--sl-color-gray-1);
+  word-break: break-word;
+}
+
+.slack-msg.is-system {
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.77rem;
+  color: var(--sl-color-gray-2);
+  padding-left: 0.1rem;
+}
+
+.slack-sys-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.slack-voice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  width: fit-content;
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--sl-color-accent) 6%, transparent);
+}
+
+.slack-voice-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--sl-color-accent);
+  color: #fff;
+}
+
+.slack-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+}
+
+.slack-wave span {
+  width: 2px;
+  border-radius: 2px;
+  background: var(--sl-color-accent-high);
+  opacity: 0.75;
+}
+
+.slack-voice-time {
+  font-size: 0.7rem;
+  color: var(--sl-color-gray-3);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .slack-window {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slack-msg {
+    animation: none;
+  }
+}
+
+/* =====================================================
+   Stage — app window + Slack window side by side
+   ===================================================== */
+
+.playground-stage {
+  margin: 2rem 0;
+}
+
+.playground-stage .playground-wrapper,
+.playground-stage .slack-window {
+  margin: 0;
+}
+
+.playground-stage.is-live {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1.62fr) minmax(360px, 1fr);
+  align-items: stretch;
+}
+
+@media (max-width: 1040px) {
+  .playground-stage.is-live {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stacked: don't force the Slack window to a tall app-matched height. */
+  .playground-stage.is-live .slack-scroll {
+    max-height: 320px;
+  }
+}
+
+/* Topbar can get busy (layer toggle + regenerate + bell + avatar) in the
+   narrower side-by-side app window — let it wrap instead of overflowing. */
+.playground-topbar {
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.playground-topbar-right {
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* =====================================================
+   Reports / Segments views (AI pages, MUS-wrapped)
+   ===================================================== */
+
+.playground-report-card {
+  gap: 1.1rem;
+}
+
+.playground-report-narrative {
+  font-size: 0.9rem;
+  color: var(--sl-color-gray-1);
+}
+
+[data-theme='light'] .playground-report-narrative {
+  color: var(--sl-color-gray-4);
+}
+
+.playground-bars,
+.playground-segments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.playground-bar-row {
+  display: grid;
+  grid-template-columns: 116px 1fr 46px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.playground-bar-label {
+  font-size: 0.8rem;
+  color: var(--sl-color-gray-2);
+}
+
+[data-theme='light'] .playground-bar-label {
+  color: var(--sl-color-gray-4);
+}
+
+.playground-bar-track {
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--sl-color-accent) 12%, transparent);
+}
+
+.playground-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--sl-color-accent), var(--sl-color-accent-high));
+  animation: bar-grow 0.7s ease both;
+}
+
+@keyframes bar-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.playground-bar-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--sl-color-accent-high);
+}
+
+[data-theme='light'] .playground-bar-value {
+  color: var(--sl-color-accent);
+}
+
+.playground-segment-row {
+  display: grid;
+  grid-template-columns: 22px 1fr 96px 30px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.playground-segment-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--sl-color-accent-high);
+  background: color-mix(in srgb, var(--sl-color-accent) 14%, transparent);
+}
+
+[data-theme='light'] .playground-segment-rank {
+  color: var(--sl-color-accent);
+}
+
+.playground-segment-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   Settings view (app chrome — deliberately no MUS)
+   ===================================================== */
+
+.playground-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.playground-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 14%, transparent);
+  background: var(--sl-color-bg);
+}
+
+.playground-settings-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.playground-settings-label span {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--sl-color-white);
+}
+
+[data-theme='light'] .playground-settings-label span {
+  color: var(--sl-color-black);
+}
+
+.playground-settings-label small {
+  font-size: 0.74rem;
+  color: var(--sl-color-gray-3);
+}
+
+.playground-settings-input {
+  font-size: 0.82rem;
+  color: var(--sl-color-gray-2);
+  padding: 0.35rem 0.7rem;
+  border-radius: 7px;
+  border: 1px solid color-mix(in srgb, var(--sl-color-accent) 18%, transparent);
+  background: color-mix(in srgb, var(--sl-color-accent) 5%, transparent);
+}
+
+.playground-settings-switch {
+  position: relative;
+  width: 34px;
+  height: 19px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  background: var(--sl-color-accent);
+}
+
+.playground-settings-switch > span {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.playground-settings-note {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.4rem 0 0 !important;
+  font-size: 0.78rem;
+  color: var(--sl-color-gray-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playground-bar-fill {
+    animation: none;
+  }
 }
