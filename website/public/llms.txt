@@ -1,0 +1,78 @@
+# MUS
+
+> MUS is an open-source React component library that adds a two-way feedback
+> layer to any section of a product. Users react in context, right where the
+> output lives. Teams add explanations that stay. One component, no forms, no
+> backend to write.
+
+MUS (`@datachef/mus` on npm) is built by DataChef, a Netherlands-based data and
+AI consultancy. It is aimed at AI products with a web face: when an output needs
+to be questioned, explained or challenged, that should happen on the screen
+where it appeared — not in a form and not in a meeting.
+
+## How it is used
+
+Wrap any output in `<FeedbackTarget>` inside a `<MusProvider>`. Hovering the
+output reveals a toolbar in place: reactions, a support message, a voice note.
+Feedback is routed to Slack, Discord, Microsoft Teams, or a webhook of your own.
+
+```tsx
+import { MusProvider, FeedbackTarget } from '@datachef/mus'
+import '@datachef/mus/styles.css'
+```
+
+## Documentation
+
+- [Introduction](https://mus.datachef.co/): what MUS is and what it looks like.
+- [Installation](https://mus.datachef.co/getting-started/): install and first component.
+- [Configuration](https://mus.datachef.co/configuration/): the `MusConfig` object.
+
+### Server setup
+
+- [Overview](https://mus.datachef.co/server/overview/): why a server route is needed.
+- [Next.js](https://mus.datachef.co/server/nextjs/)
+- [Express / Fastify / Hono](https://mus.datachef.co/server/express/)
+- [Vite SPA + Docker](https://mus.datachef.co/server/vite/)
+
+### Deployment
+
+- [Docker Compose](https://mus.datachef.co/deployment/docker/)
+- [nginx](https://mus.datachef.co/deployment/nginx/)
+- [Kubernetes](https://mus.datachef.co/deployment/kubernetes/)
+
+### Adapters
+
+- [Overview](https://mus.datachef.co/adapters/overview/): how feedback is routed.
+- [Slack](https://mus.datachef.co/adapters/slack/)
+- [Discord](https://mus.datachef.co/adapters/discord/)
+- [Microsoft Teams](https://mus.datachef.co/adapters/teams/)
+- [Webhook](https://mus.datachef.co/adapters/webhook/)
+- [Custom adapters](https://mus.datachef.co/adapters/custom/)
+
+### User resolvers
+
+- [Overview](https://mus.datachef.co/resolvers/overview/): identifying who gave feedback.
+- [Custom resolvers](https://mus.datachef.co/resolvers/custom/)
+
+### Reference
+
+- [MusConfig](https://mus.datachef.co/reference/config/): every configuration option.
+- [Event types](https://mus.datachef.co/reference/events/): the event payloads.
+- [Package exports](https://mus.datachef.co/reference/exports/): what the package exposes.
+
+### Guides
+
+- [Theming & icons](https://mus.datachef.co/guides/theming/)
+- [Customizing actions](https://mus.datachef.co/guides/actions/)
+- [Message formatting](https://mus.datachef.co/guides/formatting/)
+- [CLI (`mus init`)](https://mus.datachef.co/guides/cli/)
+- [Troubleshooting](https://mus.datachef.co/guides/troubleshooting/)
+- [Upgrade guide](https://mus.datachef.co/migration/)
+
+## Notes for agents
+
+- Source and issues: https://github.com/DataChefHQ/datachef-mus
+- Package: https://www.npmjs.com/package/@datachef/mus
+- Licence: MIT
+- Machine-readable URL inventory: https://mus.datachef.co/sitemap-index.xml
+- MUS is built by DataChef B.V. — see https://datachef.co/llms.txt.
