@@ -18,6 +18,8 @@ export { MusProvider, useMusConfig } from './context/MusContext'
 export { useFeedbackActions } from './hooks/useFeedbackActions'
 export { useMusUser } from './hooks/useMusUser'
 export { useThumbsStore } from './hooks/useThumbsStore'
+export { useSupportChannel } from './hooks/useSupportChannel'
+export type { SupportChannelState } from './hooks/useSupportChannel'
 
 /* ── Demo mode (for playground / docs site embeds) ────────── */
 export { onDemoFeedback } from './lib/demo-mode'

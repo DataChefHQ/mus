@@ -159,7 +159,7 @@ export async function createSupportChannel(
     sectionName: string
     projectSlug?: string
   }
-): Promise<void> {
+): Promise<{ channelId?: string }> {
   const url = slack.supportChannelUrl ?? '/api/mus/support-channel'
 
   const response = await fetch(url, {
@@ -179,8 +179,17 @@ export async function createSupportChannel(
     }),
   })
 
-  if (!response.ok) {
-    const body = await response.json().catch(() => ({}))
-    throw new Error((body as { error?: string }).error ?? `Support channel error: ${response.status}`)
+  const body = (await response.json().catch(() => ({}))) as {
+    error?: string
+    channelId?: string
   }
+
+  if (!response.ok) {
+    throw new Error(body.error ?? `Support channel error: ${response.status}`)
+  }
+
+  // The handler reports which channel the request landed in. Returning it lets
+  // the dialog tell a first request apart from a follow-up, so it can stop
+  // promising to create a channel that already exists.
+  return { channelId: body.channelId }
 }

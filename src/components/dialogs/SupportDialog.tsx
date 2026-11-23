@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMusConfig } from '@/context/MusContext'
 import { useMusUser } from '@/hooks/useMusUser'
+import { useSupportChannel } from '@/hooks/useSupportChannel'
 import { createSupportChannel } from '@/lib/slack-client'
 import { simulateFeedback } from '@/lib/demo-mode'
 import { cn } from '@/lib/utils'
@@ -19,6 +20,9 @@ export function SupportDialog({
 }: SupportDialogProps) {
   const config = useMusConfig()
   const { name, email } = useMusUser()
+  const { hasChannel, remember } = useSupportChannel(
+    config.projectSlug ?? config.projectName
+  )
 
   const [message, setMessage] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -30,6 +34,8 @@ export function SupportDialog({
     setSubmitting(true)
 
     try {
+      let channelId: string | undefined
+
       if (config.demoMode) {
         await simulateFeedback('support', {
           projectName: config.projectName,
@@ -41,7 +47,7 @@ export function SupportDialog({
           projectSlug: config.projectSlug,
         })
       } else {
-        await createSupportChannel(config.slack, config.projectName, {
+        const result = await createSupportChannel(config.slack, config.projectName, {
           name,
           email,
           topic: message.trim(),
@@ -49,7 +55,12 @@ export function SupportDialog({
           sectionName,
           projectSlug: config.projectSlug,
         })
+        channelId = result.channelId
       }
+
+      // From here on this person has a channel, so the next visit explains
+      // where they are going rather than offering to create one.
+      remember(channelId)
 
       config.onFeedbackSubmitted?.('support', sectionId, sectionName)
       onClose()
@@ -62,15 +73,24 @@ export function SupportDialog({
 
   return (
     <DialogShell
-      title="Get Support"
-      description="Need help? We'll create a dedicated Slack channel and invite you to chat directly with our support team."
+      title={hasChannel ? 'Back to your Slack channel' : 'Get Support'}
+      description={
+        hasChannel
+          ? // The channel already exists — saying it will be created is simply
+            // untrue on every visit after the first, and undersells what is
+            // actually on offer: a direct line to the people who built this.
+            'Your Slack channel is already open. Send this and it lands straight with the engineers who built this — no queue, no ticket.'
+          : "Need help? We'll open a private Slack channel and bring in the engineers who built this, so you can talk to them directly."
+      }
       onClose={onClose}
     >
       <div className="flex w-full flex-col gap-4">
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="What you need help with?"
+          placeholder={
+            hasChannel ? 'What would you like to ask them?' : 'What do you need help with?'
+          }
           rows={5}
           className={cn(
             'w-full resize-none rounded-mus-md border border-mus-input bg-white/5 px-[12px] py-[10px]',
@@ -89,7 +109,13 @@ export function SupportDialog({
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
-          {submitting ? 'Creating...' : 'Start chat with support'}
+          {submitting
+            ? hasChannel
+              ? 'Sending…'
+              : 'Opening channel…'
+            : hasChannel
+              ? 'Send to your Slack channel'
+              : 'Start chat with support'}
         </button>
       </div>
     </DialogShell>
