@@ -1,3 +1,13 @@
+## 1.1.3 (2026-11-23)
+
+### Features
+- feat: add llms.txt file
+- feat: live sandbox changed
+- feat: add clarity and cookie banner
+
+### Other Changes
+- ci(release): build mus-server image for amd64 and arm64
+
 ## 1.1.2 (2026-07-07)
 
 ### Features
